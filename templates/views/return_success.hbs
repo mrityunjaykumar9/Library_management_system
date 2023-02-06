@@ -1,0 +1,89 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>Signin Template · Bootstrap v5.0</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>    
+
+
+    <!-- Bootstrap core CSS -->
+<link href="/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="./style/search.css">
+
+    <style>
+      .result{
+        margin-top: 4px;
+        border-radius: 1px;
+        background-color: rgb(45, 223, 45);
+        height: 23px;
+        width: 400px;
+        color:black;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+
+  </head>
+  <body class="text-center">
+    <header>
+    {{>navbar}}
+  </header>
+    <p class="brand">Online library</h1>
+<main class="form-signin">
+ <h1 class="h3 mb-3 " style="font-weight: 500 ;">Enter Book Details</h1>
+
+  <div>
+    <form action="/returnbook" method="POST">
+
+
+    <div class="form-floating">
+      <input type="input" class="form-control" id="floatingInput" placeholder="book name" name="bname">
+      <label for="floatingInput">Book name</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="input" class="form-control" id="floatingInput" placeholder="book name" name="aname">
+      <label for="floatingInput">Author name</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="input" class="form-control" id="floatingInput" placeholder="book name" name="price">
+      <label for="floatingInput">Price</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="input" class="form-control" id="floatingInput" placeholder="book name" name="quantity">
+      <label for="floatingInput">Quantity</label>
+    </div>
+    
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Add book</button>
+    
+    
+  </form>
+
+  </div>
+
+  <p class="result">Book Returned Successfully!</p>
+
+</main>
+
+
+    
+  </body>
+</html>

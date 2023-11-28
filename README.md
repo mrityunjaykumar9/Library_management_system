@@ -7,7 +7,7 @@ Welcome to the Library Management System! This software facilitates user logins 
 ### For Customers:
 - **User Registration and Login:** Customers can create accounts and log in securely.
 - **Book Issuing and Returning:** Customers can borrow and return books from the library.
-- **Book Search:** Search for books by title, author, genre, or ISBN.
+- **Book Search:** Search for books by title, author.
 
 ### For Administrators:
 - **Admin Login:** Administrators have separate login credentials.

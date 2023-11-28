@@ -27,7 +27,7 @@ hbs.registerPartials(partial_path);
 //home page
 
 app.get("/", (req, res) => {
-    res.render("index");
+    res.render("signin");
 })
 
 app.get("/admin", (req, res) => {
@@ -160,7 +160,7 @@ app.get("/searchauthorname", (req, res) => {
 
 app.post("/searchbookname", async (req, res) => {
     try{
-        const bookname = req.body.name.trim();
+        const bookname = req.body.name.toLowerCase();
         const bookdata = Bookdata.find({name:bookname}, (err, result) =>{
             console.log(result);
             if(!result.length){
@@ -179,7 +179,7 @@ app.post("/searchbookname", async (req, res) => {
 
 app.post("/searchauthorname", async (req, res) => {
     try{
-        const authorname = req.body.aname;
+        const authorname = req.body.aname.toLowerCase();
         console.log(authorname);
         const authordata =  Bookdata.find({author: authorname }, (err, result) =>{
             if(!result.length){
@@ -204,8 +204,8 @@ app.get("/issuebook", (req, res) => {
 
 app.post("/issuebook", async (req, res) => {
     try{
-        const bname = req.body.bname;
-        const aname = req.body.aname;
+        const bname = req.body.bname.toLowerCase();
+        const aname = req.body.aname.toLowerCase();
 
         const bookdata = Bookdata.find({$and : [{name:bname}, {author:aname}]}, (err, result) => {
             if(!result.length){
@@ -220,7 +220,7 @@ app.post("/issuebook", async (req, res) => {
                 })
                 try{
                     issuedBook.save();
-                    console.log(result[0].quantity > 1)
+                    
                     if(result[0].quantity > 1){
                        
                         const updatedData = Bookdata.updateOne({$and : [{name:result[0].name}, {author:result[0].author}]},
@@ -277,28 +277,62 @@ app.get("/returnbook", (req, res) => {
 
 app.post("/returnbook", async(req, res) => {
     try{
-        const bname = req.body.bname;
-        const aname = req.body.aname;
+        const bname = req.body.bname.toLowerCase();
+        const aname = req.body.aname.toLowerCase();
         const price = req.body.price;
         const quantity = req.body.quantity;
 
-        const bookdata = Bookdata.find({$and : [{name : bname}, {author :aname}]}, (err, result) => {
+        const Issuebookdata = IssueBook.find({$and : [{name:bname}, {author:aname}]}, (err, result) => {
             if(!result.length){
-                const bookdata = new Bookdata({
-                    name : bname,
-                    author : aname,
-                    price : price,
-                    quantity : quantity
-                })
+                res.send("Entered book is not Issued");
+            }
+            else{
+                IssueBook.deleteOne({$and : [{name:result[0].name}, {author:result[0].author}]}, (err) => {
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        console.log("book data deleted");
+                    }
+                });
 
-                
+                const bookdata = Bookdata.find({$and : [{name : bname}, {author :aname}]}, (err, result) => {
+                    if(!result.length){
+                        const bookdata = new Bookdata({
+                            name : bname,
+                            author : aname,
+                            price : price,
+                            quantity : quantity
+                        })   
+        
+                        try{
+                            bookdata.save();
+                        }
+                        catch(e) {
+                            console.log(e);
+                        }
+                    }
+                    else{
+                        const updatedData = Bookdata.updateOne({$and : [{name:result[0].name}, {author:result[0].author}]},
+                            {
+                               quantity: result[0].quantity + parseInt(quantity)
+                            }, (err, docs) => {
+                                if(err){
+                                    console.log(err);
+                                }
+                                else{
+                                    console.log("issued successful");
+                                }
+                            } )
+                    }
+        
+                    res.render("return_success");
+        
+                })
             }
         })
 
         
-
-        
-
 
     }
     catch(err){
@@ -317,21 +351,45 @@ app.get("/addbook", (req, res) => {
 
 app.post("/addbook", async (req, res) => {
     try{
-        const bname = req.body.bname;
-        const aname = req.body.aname;
+        const bname = req.body.bname.toLowerCase();
+        const aname = req.body.aname.toLowerCase();
         const price = req.body.price;
         const quantity = req.body.quantity;
         
-        const bookdata =  new Bookdata({
-            name:bname,
-            author:aname,
-            price:price,
-            quantity:quantity
-        });
+        const bookdata = Bookdata.find({$and : [{name : bname}, {author :aname}]}, (err, result) => {
+            if(!result.length){
+                const bookdata = new Bookdata({
+                    name : bname,
+                    author : aname,
+                    price : price,
+                    quantity : quantity
+                })   
 
-        const bkdata = await bookdata.save();
+                try{
+                    bookdata.save();
+                }
+                catch(e) {
+                    console.log(e);
+                }
+            }
+            else{
+                const updatedData = Bookdata.updateOne({$and : [{name:result[0].name}, {author:result[0].author}]},
+                    {
+                       quantity: result[0].quantity + parseInt(quantity)
+                    }, (err, docs) => {
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log("Add successful");
+                        }
+                    } )
+            }
 
-        res.render("add_book_success");
+            res.render("add_book_success");
+
+        })
+
     }
     catch(err){
         res.send("invalid data");
@@ -347,8 +405,8 @@ app.get("/deletebook", (req, res) => {
 
 app.post("/deletebook", async (req, res) =>{
     try{
-        const bname = req.body.bname;
-        const aname = req.body.aname;
+        const bname = req.body.bname.toLowerCase();
+        const aname = req.body.aname.toLowerCase();
     
         const deletedbook = Bookdata.deleteOne({$and : [{name:bname}, {author:aname}]}, (err, result) => {
             if(!result.deletedCount){
@@ -359,21 +417,11 @@ app.post("/deletebook", async (req, res) =>{
             }
         }, {new : true})
 
-        res.render("delete_book_success");
     }
     catch(err){
         res.status(404).send("Invalid book record");
     }
 })
-
-
-
-
-
-
-
-
-
 
 app.listen(port, () => {
     console.log("server is running at port : 3000");
